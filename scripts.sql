@@ -32,3 +32,50 @@ set col1 = (select case
                      select col1, row_number() over (partition by col1) as t
                      from temp_1) as r
             );
+
+select distinct
+    replace(ВФ,'ВФ:','') f
+  from (
+           select id
+                , case when n like 'ВР:%' then n end ВР
+                , case when n like 'ВФ:%' then n end ВФ
+           from (
+                    select id,
+                           unnest(string_to_array(
+                                   replace(replace(replace(f01_015_004, 'ВР ', 'ВР:'), 'ВФ ', 'ВФ:'), ' ', ''), ';')) n
+                    from sch_res.unit001
+                ) t
+           where COALESCE(n, '') <> ''
+       ) q
+ where ВФ is not null
+ order by f
+;
+
+select distinct
+    replace(ВР,'ВР:','') f
+  from (
+           select id
+                , case when n like 'ВР:%' then n end ВР
+                , case when n like 'ВФ:%' then n end ВФ
+           from (
+                    select id,
+                           unnest(string_to_array(
+                                   replace(replace(replace(f01_015_004, 'ВР ', 'ВР:'), 'ВФ ', 'ВФ:'), ' ', ''), ';')) n
+                    from sch_res.unit001
+                ) t
+           where COALESCE(n, '') <> ''
+       ) q
+ where ВР is not null
+ order by f
+;
+
+select id
+    , case when n like 'ВР:%' then n end ВР
+    , case when n like 'ВФ:%' then n end ВФ
+from (
+        select id,
+               unnest(string_to_array(
+                       replace(replace(replace(f01_015_004, 'ВР ', 'ВР:'), 'ВФ ', 'ВФ:'), ' ', ''), ';')) n
+        from sch_res.unit001
+    ) t
+where COALESCE(n, '') <> ''
